@@ -1,0 +1,1 @@
+CREATE SEQUENCE content_id_seq;
