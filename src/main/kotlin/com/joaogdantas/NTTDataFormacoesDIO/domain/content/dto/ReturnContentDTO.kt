@@ -6,7 +6,7 @@ import com.joaogdantas.NTTDataFormacoesDIO.domain.enums.Technologies
 import java.util.UUID
 
 data class ReturnContentDTO(
-    var id: UUID,
+    var id: Long,
     var title: String,
     var durationInMinutes: Int,
     var technology: List<Technologies>,

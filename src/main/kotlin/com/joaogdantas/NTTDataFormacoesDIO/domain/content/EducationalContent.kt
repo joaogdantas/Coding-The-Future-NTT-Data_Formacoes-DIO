@@ -13,9 +13,10 @@ import java.util.*
 @Table(name = "contents")
 class EducationalContent(data: RegisterContentDTO) {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "content_id_seq")
+    @SequenceGenerator(name = "content_id_seq", sequenceName = "content_id_seq", allocationSize = 1)
     @Column(name = "id")
-    val id: UUID? = null
+    val id: Long? = null
 
     @Column(name = "title")
     var title: String? = null;
