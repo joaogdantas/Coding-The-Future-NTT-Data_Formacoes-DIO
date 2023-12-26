@@ -4,6 +4,7 @@ import com.joaogdantas.NTTDataFormacoesDIO.domain.content.ContentRepository
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.EducationalContent
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.dto.RegisterContentDTO
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.dto.ReturnContentDTO
+import com.joaogdantas.NTTDataFormacoesDIO.domain.user.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -24,6 +25,12 @@ class ContentController {
                         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
 
+        val existentTitle: Optional<EducationalContent> = contentRepository.findByTitle(data.title)
+
+        if(existentTitle.isPresent){
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body("Já existe um conteúdo com título, por favor escolha outro")
+        }
+
         val newContent = EducationalContent(data)
         contentRepository.save(newContent)
 
@@ -43,7 +50,7 @@ class ContentController {
     }
 
     @GetMapping("/{id}")
-    fun getContentById(@PathVariable id: UUID): ResponseEntity<ReturnContentDTO> {
+    fun getContentById(@PathVariable id: Long): ResponseEntity<ReturnContentDTO> {
         val optionalContent = contentRepository.findById(id)
 
         return if (optionalContent.isPresent) {
@@ -55,7 +62,7 @@ class ContentController {
     }
 
     @DeleteMapping("delete/{id}")
-    fun deleteContent(@PathVariable id: UUID): ResponseEntity<String> {
+    fun deleteContent(@PathVariable id: Long): ResponseEntity<String> {
         val optionalContent = contentRepository.findById(id)
 
         return if (optionalContent.isPresent) {
