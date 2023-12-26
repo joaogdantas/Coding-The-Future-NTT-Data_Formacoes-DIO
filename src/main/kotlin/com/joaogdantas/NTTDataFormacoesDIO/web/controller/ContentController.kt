@@ -4,6 +4,8 @@ import com.joaogdantas.NTTDataFormacoesDIO.domain.content.ContentRepository
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.EducationalContent
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.dto.RegisterContentDTO
 import com.joaogdantas.NTTDataFormacoesDIO.domain.content.dto.ReturnContentDTO
+import com.joaogdantas.NTTDataFormacoesDIO.domain.course.Course
+import com.joaogdantas.NTTDataFormacoesDIO.domain.course.CourseRepository
 import com.joaogdantas.NTTDataFormacoesDIO.domain.user.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -17,8 +19,13 @@ import java.util.*
 class ContentController {
     private lateinit var content: EducationalContent
 
+    private lateinit var course: Course
+
     @Autowired
     private lateinit var contentRepository: ContentRepository
+
+    @Autowired
+    private lateinit var courseRepository: CourseRepository
 
     @PostMapping("/create")
     fun registerContent(@RequestBody data: RegisterContentDTO,
@@ -28,10 +35,19 @@ class ContentController {
         val existentTitle: Optional<EducationalContent> = contentRepository.findByTitle(data.title)
 
         if(existentTitle.isPresent){
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body("Já existe um conteúdo com título, por favor escolha outro")
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body("Já existe um conteúdo com esse título, por favor escolha outro")
         }
 
         val newContent = EducationalContent(data)
+
+        val existentCourse: Optional<Course> = courseRepository.findById(data.courseId)
+
+        if(existentCourse.isEmpty){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body("Não existe um curso com esse id, por favor escolha um existente")
+        }
+
+        newContent.course = existentCourse.get()
+
         contentRepository.save(newContent)
 
         val uri = uriComponentsBuilder

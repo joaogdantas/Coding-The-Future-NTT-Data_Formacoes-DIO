@@ -13,5 +13,7 @@ data class RegisterContentDTO(
 
     var technology: List<Technologies>,
 
-    var level: Level
+    var level: Level,
+
+    var courseId: Long
 )

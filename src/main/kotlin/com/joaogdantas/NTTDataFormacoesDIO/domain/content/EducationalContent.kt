@@ -42,14 +42,4 @@ class EducationalContent(data: RegisterContentDTO) {
         this.technology = data.technology
         this.level = data.level
     }
-
-    private fun convertToDTO(content: EducationalContent): ReturnContentDTO {
-        return ReturnContentDTO(
-            id = content.id!!,
-            title = content.title!!,
-            durationInMinutes = content.durationInMinutes!!,
-            technology = content.technology!!,
-            level = content.level!!
-        )
-    }
 }
