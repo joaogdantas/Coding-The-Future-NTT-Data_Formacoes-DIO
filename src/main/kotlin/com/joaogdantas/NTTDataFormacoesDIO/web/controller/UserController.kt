@@ -23,8 +23,19 @@ class UserController {
     fun registerUser(@RequestBody data: RegisterUserDTO,
                      uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<String> {
 
+        val existentEmail: Optional<User> = userRepository.findByEmail(data.email)
+
+        if(existentEmail.isPresent){
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body("Já existe um usuário registrado com esse email, por favor escolha outro")
+        }
+
+        val existentLogin: Optional<User> = userRepository.findByLogin(data.login)
+
+        if(existentLogin.isPresent){
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body("Já existe um usuário registrado com esse login, por favor escolha outro")
+        }
+
         val newUser = User(data)
-        newUser.reputation = 0;
         userRepository.save(newUser)
 
         val uri = uriComponentsBuilder
